@@ -24,13 +24,17 @@ class GoogleMap extends Component {
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
         >
-          {users.map(user => (
-            <Marker
-              lat={user.coords.lat}
-              lng={user.coords.lng}
-              name={user.name}
-            />
-          ))}
+          {users.map(user => {
+            if (user.coords) {
+              return (
+                <Marker
+                  lat={user.coords.lat}
+                  lng={user.coords.lng}
+                  name={user.name}
+                />
+              );
+            }
+          )}
         </GoogleMapReact>
       </div>
     )
