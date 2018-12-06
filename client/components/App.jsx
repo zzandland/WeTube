@@ -80,24 +80,27 @@ class App extends Component {
   }
 
   sendMessage() {
-    let messageInput = document.querySelector('#chat');
-    socket.emit('new_message', messageInput.value);
-    messageInput.value = '';
-    return false;
+    if (event.type === 'click' || event.key === 'Enter') {
+      let messageInput = document.querySelector('#chat');
+      socket.emit('new_message', messageInput.value);
+      messageInput.value = '';
+      return false;
+    }
   }
 
   searchVideo() {
-    const query = document.querySelector('#search').value;
-    axios.post('/api/search', { query })
-      .then((data) => {
-        this.setState({
-          videos: data.data,
+    if (event.type === 'click' || event.key === 'Enter') {
+      const query = document.querySelector('#search').value;
+      axios.post('/api/search', { query })
+        .then((data) => {
+          this.setState({
+            videos: data.data,
+          })
         })
-      })
+    }
   }
 
   shareVideo(video) {
-    console.log(video)
     this.setState({
       current: video,
       videos: [],
@@ -122,7 +125,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.state);
     const { videos, current, videoToggle, mapToggle, messages, users } = this.state;
     let videoList, mainVideo, youtube, map;
     if (videoToggle) {

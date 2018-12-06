@@ -20,7 +20,7 @@ const ChatterBox = (props) => {
           ))}
         </ul>
         <div>
-          <input type="text" id="chat"></input>
+          <input onKeyPress={sendMessage} type="text" id="chat"></input>
           <button type="submit" onClick={sendMessage}>Send</button>
           <button onClick={toggleYoutube}><i class="fab fa-youtube"></i></button>
         </div>
