@@ -8,7 +8,7 @@ const search = (query, callback) => {
     part: 'snippet',
     order: 'relevance',
     type: 'video',
-    key: APIkey,
+    key: APIkey.youtube,
   }
   let paramStr = '';
   for (var param in params) {

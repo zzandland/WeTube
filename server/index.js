@@ -9,7 +9,7 @@ const socket = require('socket.io-client')();
 
 app.use(express.json());
 
-const port = 3000;
+const port = 80;
 
 app.use(express.static(path.join(__dirname, '../public')));
 

@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import GoogleMapReact from 'google-map-react';
 import Marker from './Marker.jsx';
+import APIkey from '../../youtubeAPI.js';
 
 class GoogleMap extends Component {
   constructor(props) {
@@ -20,7 +21,7 @@ class GoogleMap extends Component {
     return (
       <div style={{ height: '400px', width: '400px' }}>
         <GoogleMapReact
-          bootstrapURLKeys={{ key: 'AIzaSyBGQHRm30-6dYSXwf_JWQYr05nI1Ty1Q8I' }}
+          bootstrapURLKeys={{ key: APIkey.map }}
           defaultCenter={this.props.center}
           defaultZoom={this.props.zoom}
         >
@@ -34,7 +35,7 @@ class GoogleMap extends Component {
                 />
               );
             }
-          )}
+          })}
         </GoogleMapReact>
       </div>
     )
