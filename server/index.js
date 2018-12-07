@@ -29,6 +29,7 @@ const users = [];
 
 io.on('connection', (socket) => {
   socket.on('change_username', (data) => {
+    users.splice(users.indexOf(socket.userId), 1);
     socket.userId = Math.random().toString(16).substring(2, 15);
     socket.username = data.username;
     users.push({

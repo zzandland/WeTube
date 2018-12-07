@@ -95,6 +95,7 @@ class App extends Component {
     axios.post('/api/search', { searchQuery })
       .then((data) => {
         this.setState({ videos: data.data });
+	this.focusTextInput();
       })
   }
 
