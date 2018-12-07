@@ -102,10 +102,9 @@ class App extends Component {
   }
 
   sendMessage(event) {
-    event.preventDefault();
     const { message } = this.state;
+    event.preventDefault();
     socket.emit('new_message', message);
-            id="hey"
     this.setState({ message: '' });
     return false;
   }
