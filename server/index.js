@@ -29,12 +29,16 @@ const users = [];
 
 io.on('connection', (socket) => {
   socket.on('change_username', (data) => {
-    users.splice(users.indexOf(socket.userId), 1);
-    socket.userId = Math.random().toString(16).substring(2, 15);
+    if (!socket.userId) {
+      socket.userId = Math.random().toString(16).substring(2, 15);
+    } else {
+      const userIndex = users.map(user => user.userId).indexOf(socket.userId);
+      users.splice(userIndex, 1);
+    }
     socket.username = data.username;
     users.push({
       name: socket.username,
-      id: socket.userId,
+      userId: socket.userId,
     });
     io.sockets.emit('new_message', {
       message: `${socket.username} entered the room!`, 
@@ -50,7 +54,7 @@ io.on('connection', (socket) => {
   })
 
   socket.on('send_coords', (data) => {
-    const userIndex = users.map(user => user.id).indexOf(socket.userId);
+    const userIndex = users.map(user => user.userId).indexOf(socket.userId);
     users[userIndex].coords = data; 
     io.sockets.emit('clients_connected', users);
   });
