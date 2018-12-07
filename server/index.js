@@ -14,9 +14,9 @@ const port = 80;
 app.use(express.static(path.join(__dirname, '../public')));
 
 app.post('/api/search', (req, res) => {
-  const { query } = req.body;
-  if (query !== '') {
-    youtube.search(query, (err, response) => {
+  const { searchQuery } = req.body;
+  if (searchQuery !== '') {
+    youtube.search(searchQuery, (err, response) => {
       if (err) { res.send(err.response) }
       else {
         res.send(response.data.items);
