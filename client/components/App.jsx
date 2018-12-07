@@ -47,11 +47,8 @@ class App extends Component {
       this.setState({
         messages: newMessages,
       })
+      this.focusTextInput();
     });
-  }
-
-  componentDidUpdate() {
-    this.focusTextInput();
   }
 
   changeUsername() {
