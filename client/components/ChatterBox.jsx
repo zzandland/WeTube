@@ -3,7 +3,7 @@ import axios from 'axios';
 import Chat from './Chat.jsx';
 
 const ChatterBox = (props) => {
-  const { users, changeUsername, sendMessage, toggleYoutube, messages, current } = props;
+  const { users, changeUsername, sendMessage, setRef, handleMessageChange, toggleYoutube, messages, message, current } = props;
   let currentVideo;
   if (current.etag !== '') {
     const src = `https://www.youtube.com/embed/${current.id.videoId}?autoplay=1`;
@@ -19,11 +19,17 @@ const ChatterBox = (props) => {
             <Chat message={message} />
           ))}
         </ul>
-        <div>
-          <input onKeyPress={sendMessage} type="text" id="chat"></input>
-          <button type="submit" onClick={sendMessage}>Send</button>
+        <form onSubmit={sendMessage}>
+          <input 
+            type="text" 
+            tabIndex="-1"
+            ref={setRef}
+            value={message} 
+            onChange={handleMessageChange}
+          ></input>
+          <input type="submit" value="Send" />
           <button onClick={toggleYoutube}><i class="fab fa-youtube"></i></button>
-        </div>
+        </form>
         <button onClick={changeUsername}>Change username</button>
       </div>
     </div>

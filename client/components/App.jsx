@@ -14,29 +14,18 @@ class App extends Component {
     this.state = {
       videos: [],
       messages: [],
+      searchQuery: '',
+      message: '',
       current: { etag:'' },
       users: [],
       videoToggle: false,
       mapToggle: false,
     };
-    this.changeUsername = this.changeUsername.bind(this);
-    this.sendMessage = this.sendMessage.bind(this);
-    this.searchVideo = this.searchVideo.bind(this);
-    this.shareVideo = this.shareVideo.bind(this);
-    this.toggleYoutube = this.toggleYoutube.bind(this);
   }
 
   componentDidMount() {
     this.changeUsername();
     this.getCoordinates();
-    
-    socket.on('new_message', (message) => {
-      const newMessages = this.state.messages.slice();
-      newMessages.push(message);
-      this.setState({
-        messages: newMessages,
-      })
-    });
     
     socket.on('change_video', (video) => {
       if (video.etag !== '') {
@@ -51,11 +40,27 @@ class App extends Component {
         users: newList
       });
     });
+    
+    socket.on('new_message', (message) => {
+      const newMessages = this.state.messages.slice();
+      newMessages.push(message);
+      this.setState({
+        messages: newMessages,
+      })
+    });
+  }
+
+  componentDidUpdate() {
+    this.focusTextInput();
   }
 
   changeUsername() {
     const newName = prompt("Please enter your new name", 'Anonymous');
     socket.emit('change_username', { username: newName });
+  }
+
+  focusTextInput() {
+    this.textInput.focus();
   }
 
   getCoordinates() {
@@ -79,25 +84,34 @@ class App extends Component {
     navigator.geolocation.getCurrentPosition(success, error, options);
   }
 
-  sendMessage() {
-    if (event.type === 'click' || event.key === 'Enter') {
-      let messageInput = document.querySelector('#chat');
-      socket.emit('new_message', messageInput.value);
-      messageInput.value = '';
-      return false;
-    }
+  handleMessageChange(event) {
+    this.setState({ message: event.target.value });
   }
 
-  searchVideo() {
-    if (event.type === 'click' || event.key === 'Enter') {
-      const query = document.querySelector('#search').value;
-      axios.post('/api/search', { query })
-        .then((data) => {
-          this.setState({
-            videos: data.data,
-          })
-        })
-    }
+  handleSearchChange(event) {
+    this.setState({ searchQuery: event.target.value });
+  }
+
+  searchVideo(event) {
+    event.preventDefault();
+    const { searchQuery } = this.state;
+    axios.post('/api/search', { searchQuery })
+      .then((data) => {
+        this.setState({ videos: data.data });
+      })
+  }
+
+  sendMessage(event) {
+    event.preventDefault();
+    const { message } = this.state;
+    socket.emit('new_message', message);
+            id="hey"
+    this.setState({ message: '' });
+    return false;
+  }
+
+  setRef(element) {
+    this.textInput = element;
   }
 
   shareVideo(video) {
@@ -125,7 +139,8 @@ class App extends Component {
   }
 
   render() {
-    const { videos, current, videoToggle, mapToggle, messages, users } = this.state;
+    console.log(this.state);
+    const { videos, current, searchQuery, videoToggle, mapToggle, messages, message, users } = this.state;
     let videoList, mainVideo, youtube, map;
     if (videoToggle) {
       if (!videos.length) {
@@ -133,13 +148,16 @@ class App extends Component {
       } else {
         videoList = (
           <div>
-            <VideoList videos={videos} shareVideo={this.shareVideo} />
+            <VideoList videos={videos} shareVideo={this.shareVideo.bind(this)} />
           </div>
         );
       }
       youtube = (
         <div>
-          <Search searchVideo={this.searchVideo} />
+          <Search 
+            handleSearchChange={this.handleSearchChange.bind(this)} 
+            searchVideo={this.searchVideo.bind(this)} 
+          />
           {videoList}
           {mainVideo}
         </div>
@@ -149,23 +167,26 @@ class App extends Component {
       map = (
         <div>
           <GoogleMap users={users} />
-          <button onClick={() => { this.toggleGoogleMap() }}>Close</button>
+          <button onClick={this.toggleGoogleMap.bind(this)}>Close</button>
         </div>
       );
     } else {
-      map = <button onClick={() => { this.toggleGoogleMap() }}>Where is everyone?</button>
+      map = <button onClick={this.toggleGoogleMap.bind(this)}>Where is everyone?</button>
     }
     return (
       <div>
         {youtube}
         <ChatterBox 
           messages={messages} 
+          message={message}
           current={current} 
           users={users}
-          changeUsername={this.changeUsername}
-          sendMessage={this.sendMessage}
-          toggleGoogleMap={this.toggleGoogleMap}
-          toggleYoutube={this.toggleYoutube}
+          changeUsername={this.changeUsername.bind(this)}
+          handleMessageChange={this.handleMessageChange.bind(this)}
+          sendMessage={this.sendMessage.bind(this)}
+          setRef={this.setRef.bind(this)}
+          toggleGoogleMap={this.toggleGoogleMap.bind(this)}
+          toggleYoutube={this.toggleYoutube.bind(this)}
         />
         {map}
       </div>
