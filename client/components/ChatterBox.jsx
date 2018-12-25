@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Chat from './Chat.jsx';
 
-const ChatterBox = (props) => {
+export default (props) => {
   const { users, changeUsername, sendMessage, setRef, handleMessageChange, toggleYoutube, messages, message, current } = props;
   let currentVideo;
   if (current.etag !== '') {
@@ -25,7 +25,7 @@ const ChatterBox = (props) => {
             tabIndex="-1"
             ref={setRef}
             value={message} 
-            onChange={handleMessageChange}
+            onChange={(event) => { handleMessageChange(event.target.value) }}
           ></input>
           <input type="submit" value="Send" />
           <button onClick={toggleYoutube}><i class="fab fa-youtube"></i></button>
@@ -34,6 +34,4 @@ const ChatterBox = (props) => {
       </div>
     </div>
   );
-}
-
-export default ChatterBox;
+};

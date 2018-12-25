@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import io from 'socket.io-client';
-import ChatterBox from './ChatterBox.jsx';
-import Search from './Search.jsx';
+import ChatterBox from '../containers/ChatterBox';
+import Search from '../containers/Search';
 import VideoList from './VideoList.jsx';
 import GoogleMap from './GoogleMap.jsx';
 import axios from 'axios';
@@ -9,13 +9,10 @@ import axios from 'axios';
 let socket = io();
 
 class App extends Component { 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
       videos: [],
-      messages: [],
-      searchQuery: '',
-      message: '',
       current: { etag:'' },
       users: [],
       videoToggle: false,
@@ -36,17 +33,14 @@ class App extends Component {
     })
 
     socket.on('clients_connected', (newList) => {
-      this.setState({
-        users: newList
-      });
+      const { handleUsersChange } = this.props;
+      handleUsersChange(newList);
     });
     
     socket.on('new_message', (message) => {
-      const newMessages = this.state.messages.slice();
-      newMessages.push(message);
-      this.setState({
-        messages: newMessages,
-      })
+      console.log(message);
+      const { handleMessagesChange } = this.props;
+      handleMessagesChange(message);
       this.focusTextInput();
     });
   }
@@ -81,29 +75,21 @@ class App extends Component {
     navigator.geolocation.getCurrentPosition(success, error, options);
   }
 
-  handleMessageChange(event) {
-    this.setState({ message: event.target.value });
-  }
-
-  handleSearchChange(event) {
-    this.setState({ searchQuery: event.target.value });
-  }
-
   searchVideo(event) {
     event.preventDefault();
     const { searchQuery } = this.state;
     axios.post('/api/search', { searchQuery })
       .then((data) => {
         this.setState({ videos: data.data });
-	this.focusTextInput();
+	      this.focusTextInput();
       })
   }
 
   sendMessage(event) {
-    const { message } = this.state;
     event.preventDefault();
+    const { message, handleMessageChange } = this.props;
     socket.emit('new_message', message);
-    this.setState({ message: '' });
+    handleMessageChange('');
     return false;
   }
 
@@ -151,10 +137,7 @@ class App extends Component {
       }
       youtube = (
         <div>
-          <Search 
-            handleSearchChange={this.handleSearchChange.bind(this)} 
-            searchVideo={this.searchVideo.bind(this)} 
-          />
+          <Search searchVideo={() => { this.searchVideo() }} />
           {videoList}
           {mainVideo}
         </div>
@@ -174,12 +157,9 @@ class App extends Component {
       <div>
         {youtube}
         <ChatterBox 
-          messages={messages} 
-          message={message}
           current={current} 
           users={users}
           changeUsername={this.changeUsername.bind(this)}
-          handleMessageChange={this.handleMessageChange.bind(this)}
           sendMessage={this.sendMessage.bind(this)}
           setRef={this.setRef.bind(this)}
           toggleGoogleMap={this.toggleGoogleMap.bind(this)}
