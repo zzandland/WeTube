@@ -1,6 +1,6 @@
 import { connect } from 'react-redux';
 import { updateMessage, updateName } from '../actions/chatService';
-import { toggleYoutube } from '../actions/youtubeService';
+import { toggleYoutube } from '../actions/rendering';
 import { socketEmit } from '../actions/websockets';
 import ChatterBox from '../components/ChatterBox';
 

@@ -8,28 +8,30 @@ import axios from 'axios';
 class App extends Component { 
   constructor(props) {
     super(props);
-    this.state = {
-      mapToggle: false,
-    };
   }
 
   componentDidMount() {
-    const { changeUsername } = this.props;
-    changeUsername('Anonymous');
-    this.getCoordinates();
+    this.initUsername();
+    this.initCoordinates();
   }
 
   focusTextInput() {
     this.textInput.focus();
   }
 
-  getCoordinates() {
+  initUsername() {
+    const { changeUsername } = this.props;
+    changeUsername('Anonymous');
+  }
+
+  initCoordinates() {
+    const { getCoordinates } = this.props;
     const success = (pos) => {
       const crd = {
         lat: pos.coords.latitude,
         lng: pos.coords.longitude,
       }
-      //socket.emit('send_coords', crd);
+      getCoordinates(crd);
     }
 
     const error = (err) => {
@@ -48,16 +50,8 @@ class App extends Component {
     this.textInput = element;
   }
 
-  toggleGoogleMap() {
-    const { mapToggle } = this.state;
-    this.setState({
-      mapToggle: !mapToggle
-    });
-  }
-
   render() {
-    const { videoToggle } = this.props;
-    const { mapToggle } = this.state;
+    const { videoToggle, mapToggle, toggleGoogleMap } = this.props;
     let youtube, map;
     if (videoToggle) {
       youtube = (
@@ -71,18 +65,17 @@ class App extends Component {
       map = (
         <div>
           <GoogleMap />
-          <button onClick={this.toggleGoogleMap.bind(this)}>Close</button>
+          <button onClick={() => { toggleGoogleMap() }}>Close</button>
         </div>
       );
     } else {
-      map = <button onClick={this.toggleGoogleMap.bind(this)}>Where is everyone?</button>
+      map = <button onClick={() => { toggleGoogleMap() }}>Where is everyone?</button>
     }
     return (
       <div>
         {youtube}
         <ChatterBox 
           setRef={this.setRef.bind(this)}
-          toggleGoogleMap={this.toggleGoogleMap.bind(this)}
         />
         {map}
       </div>

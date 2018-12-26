@@ -31,7 +31,3 @@ export const searchYoutube = (searchQuery) => {
 export const clearSearch = () => ({
   type: 'CLEAR_SEARCH',
 });
-
-export const toggleYoutube = (bool) => ({
-  type: 'TOGGLE_YOUTUBE',
-});

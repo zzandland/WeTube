@@ -53,7 +53,7 @@ io.on('connection', (socket) => {
     io.sockets.emit('NEW_VIDEO', video);
   })
 
-  socket.on('send_coords', (data) => {
+  socket.on('SEND_COORDS', (data) => {
     const userIndex = users.map(user => user.userId).indexOf(socket.userId);
     users[userIndex].coords = data; 
     io.sockets.emit('UPDATE_USERS', users);

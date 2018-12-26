@@ -3,16 +3,10 @@ const initialState = {
   videos: [],
   isLoading: false,
   hasErrored: false,
-  videoToggle: false,
 };
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'TOGGLE_YOUTUBE':
-      return Object.assign({}, state, {
-        videoToggle: !state.videoToggle,
-      })
-
     case 'SEARCH_IS_LOADING':
       return Object.assign({}, state, {
         isLoading: action.isLoading, 
