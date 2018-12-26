@@ -3,6 +3,7 @@ import ChatterBox from '../containers/ChatterBox';
 import Search from '../containers/Search';
 import VideoList from '../containers/VideoList';
 import GoogleMap from '../containers/GoogleMap';
+import Game from '../containers/Game';
 import axios from 'axios';
 
 class App extends Component { 
@@ -21,7 +22,8 @@ class App extends Component {
 
   initUsername() {
     const { changeUsername } = this.props;
-    changeUsername('Anonymous');
+    const randomNum = Math.floor(Math.random * 1000);
+    changeUsername(`Anonymous`);
   }
 
   initCoordinates() {
@@ -51,8 +53,8 @@ class App extends Component {
   }
 
   render() {
-    const { videoToggle, mapToggle, toggleGoogleMap } = this.props;
-    let youtube, map;
+    const { videoToggle, mapToggle, gameToggle, toggleGoogleMap, toggleGamePlay } = this.props;
+    let youtube, map, game;
     if (videoToggle) {
       youtube = (
         <div>
@@ -60,6 +62,16 @@ class App extends Component {
           <VideoList />
         </div>
       );
+    }
+    if (gameToggle) {
+      game = (
+        <div>
+          <Game />
+          <button onClick={() => { toggleGamePlay() }}>Hide</button>
+        </div>
+      );
+    } else {
+      game = <button onClick={() => { toggleGamePlay() }}>Play Game!</button>
     }
     if (mapToggle) {
       map = (
@@ -74,9 +86,8 @@ class App extends Component {
     return (
       <div>
         {youtube}
-        <ChatterBox 
-          setRef={this.setRef.bind(this)}
-        />
+        <ChatterBox setRef={this.setRef.bind(this)} />
+        {game}
         {map}
       </div>
     );
