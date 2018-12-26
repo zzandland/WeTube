@@ -28,7 +28,7 @@ app.post('/api/search', (req, res) => {
 const users = [];
 
 io.on('connection', (socket) => {
-  socket.on('change_username', (data) => {
+  socket.on('NEW_USER', (data) => {
     if (!socket.userId) {
       socket.userId = Math.random().toString(16).substring(2, 15);
     } else {
@@ -40,38 +40,39 @@ io.on('connection', (socket) => {
       name: socket.username,
       userId: socket.userId,
     });
-    io.sockets.emit('new_message', {
+    io.sockets.emit('UPDATE_MESSAGES', {
       message: `${socket.username} entered the room!`, 
     });
-    io.sockets.emit('clients_connected', users);
+    io.sockets.emit('UPDATE_USERS', users);
   });
 
-  socket.on('change_video', (video) => {
-    io.sockets.emit('new_message', {
+  socket.on('SHARE_VIDEO', (video) => {
+    io.sockets.emit('UPDATE_MESSAGES', {
       message: `${socket.username} shared ${video.snippet.title}!`,
     });
-    io.sockets.emit('change_video', video);
+    io.sockets.emit('NEW_VIDEO', video);
   })
 
   socket.on('send_coords', (data) => {
     const userIndex = users.map(user => user.userId).indexOf(socket.userId);
     users[userIndex].coords = data; 
-    io.sockets.emit('clients_connected', users);
+    io.sockets.emit('UPDATE_USERS', users);
   });
 
-  socket.on('new_message', (message) => {
-    io.sockets.emit('new_message', {
+  socket.on('NEW_MESSAGE', (message) => {
+    io.sockets.emit('UPDATE_MESSAGES', {
       message: message, 
       username: socket.username,
     })
   });
 
   socket.on('disconnect', () => {
-    users.splice(users.indexOf(socket.userId), 1);
-    io.sockets.emit('new_message', {
+    const userIndex = users.map(user => user.userId).indexOf(socket.userId);
+    users.splice(userIndex, 1);
+    io.sockets.emit('UPDATE_MESSAGES', {
       message: `${socket.username} left the room`,
     });
-    io.sockets.emit('clients_connected', users);
+    io.sockets.emit('UPDATE_USERS', users);
   });
 })
 

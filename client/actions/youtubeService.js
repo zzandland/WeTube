@@ -28,7 +28,10 @@ export const searchYoutube = (searchQuery) => {
   };
 };
 
-export const shareCurrentVideo = (video) => ({
-  type: 'SHARE_VIDEO',
-  video,
+export const clearSearch = () => ({
+  type: 'CLEAR_SEARCH',
+});
+
+export const toggleYoutube = (bool) => ({
+  type: 'TOGGLE_YOUTUBE',
 });

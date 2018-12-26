@@ -2,8 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Chat from './Chat.jsx';
 
-export default (props) => {
-  const { users, changeUsername, sendMessage, setRef, handleMessageChange, toggleYoutube, messages, message, current } = props;
+export default ({ message, messages, name, users, current, changeUsername, handleNameChange, handleMessageChange, sendMessage, toggleYoutube, setRef }) => {
   let currentVideo;
   if (current.etag !== '') {
     const src = `https://www.youtube.com/embed/${current.id.videoId}?autoplay=1`;
@@ -19,18 +18,36 @@ export default (props) => {
             <Chat message={message} />
           ))}
         </ul>
-        <form onSubmit={sendMessage}>
+        <form 
+          onSubmit={event => {
+            event.preventDefault();
+            sendMessage(message);
+            handleMessageChange('');
+          }
+        }>
           <input 
             type="text" 
-            tabIndex="-1"
             ref={setRef}
             value={message} 
-            onChange={(event) => { handleMessageChange(event.target.value) }}
+            onChange={event => { handleMessageChange(event.target.value) }}
           ></input>
           <input type="submit" value="Send" />
-          <button onClick={toggleYoutube}><i class="fab fa-youtube"></i></button>
         </form>
-        <button onClick={changeUsername}>Change username</button>
+        <button onClick={() => { toggleYoutube() }}><i class="fab fa-youtube"></i></button>
+        <form
+          onSubmit={event => {
+            event.preventDefault();
+            changeUsername(name);           
+            handleNameChange('');
+          }}
+        >
+          <input
+            type="text"
+            value={name}
+            onChange={event => { handleNameChange(event.target.value) }}
+          ></input>
+          <button>Change username</button>
+        </form>
       </div>
     </div>
   );

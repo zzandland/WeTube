@@ -5,6 +5,11 @@ export default (state = {}, action) => {
         message: action.message,
       });
 
+    case 'HANDLE_NAME_CHANGE':
+      return Object.assign({}, state, {
+        name: action.name,
+      })
+
     case 'HANDLE_SEARCH_CHANGE':
       return Object.assign({}, state, {
         searchQuery: action.query,

@@ -1,15 +1,16 @@
 import { connect } from 'react-redux';
-import { updateMessage, updateMessages, updateUsers } from '../actions';
+import { updateMessage, updateMessages, updateUsers } from '../actions/chatService';
+import { toggleYoutube } from '../actions/youtubeService';
+import { socketEmit } from '../actions/websockets';
 import App from '../components/App';
 
-const mapStateToProps = ({ inputs }) => ({
+const mapStateToProps = ({ inputs, youtubeService }) => ({
+  videoToggle: youtubeService.videoToggle,
   message: inputs.message,
 })
 
 const mapDispatchToProps = dispatch => ({
-  handleMessageChange: message => dispatch(updateMessage(message)),
-  handleMessagesChange: messages => dispatch(updateMessages(messages)),
-  handleUsersChange: userList => dispatch(updateUsers(userList)),
+  changeUsername: username => socketEmit('NEW_USER', { username }),
 });
 
 export default connect (

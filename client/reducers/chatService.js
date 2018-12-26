@@ -5,16 +5,16 @@ const initialState = {
 
 export default (state = initialState, action) => {
   switch (action.type) {
-    case 'HANDLE_MESSAGES_CHANGE':
+    case 'UPDATE_MESSAGES':
       const newMessages = state.messages.slice();
-      newMessages.push(action.message);
+      newMessages.push(action.payload);
       return Object.assign({}, state, {
         messages: newMessages,
       });
 
-    case 'HANDLE_USERS_CHANGE':
+    case 'UPDATE_USERS':
       return Object.assign({}, state, {
-        users: action.users, 
+        users: action.payload, 
       });
 
     default:
