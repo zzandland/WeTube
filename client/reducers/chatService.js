@@ -1,6 +1,7 @@
 const initialState = {
   messages: [],
   users: [],
+  self: {},
 };
 
 export default (state = initialState, action) => {
@@ -16,6 +17,11 @@ export default (state = initialState, action) => {
       return Object.assign({}, state, {
         users: action.payload, 
       });
+
+    case 'UPDATE_SELF':
+      return Object.assign({}, state, {
+        self: action.payload,
+      })
 
     default:
       return state;

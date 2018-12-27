@@ -1,19 +1,30 @@
 import { connect } from 'react-redux';
 import { updateMessage, updateMessages, updateUsers } from '../actions/chatService';
-import { toggleYoutube, toggleGoogleMap } from '../actions/rendering';
+import { toggleYoutube, toggleGoogleMap, toggleGame } from '../actions/rendering';
+import { sendGameResponse, gameRequestRespond } from '../actions/game';
 import { socketEmit } from '../actions/websockets';
 import App from '../components/App';
 
-const mapStateToProps = ({ inputs, youtubeService, rendering }) => ({
+const mapStateToProps = ({ inputs, chatService, youtubeService, rendering, game }) => ({
+  users: chatService.users,
+  self: chatService.self,
   videoToggle: rendering.videoToggle,
   mapToggle: rendering.mapToggle,
-  message: inputs.message,
+  gameToggle: rendering.gameToggle,
+  hasReceived: game.hasReceived,
+  receivedData: game.receivedData,
 })
 
 const mapDispatchToProps = dispatch => ({
-  changeUsername: username => socketEmit('NEW_USER', { username }),
   toggleGoogleMap: () => dispatch(toggleGoogleMap()),
+  toggleGamePlay: () => dispatch(toggleGame()),
+  changeUsername: username => socketEmit('NEW_USER', { username }),
   getCoordinates: (crd) => socketEmit('SEND_COORDS', crd),
+  sendGameResponse: data => {
+    socketEmit('SEND_RESPONSE', data);
+    dispatch(toggleGame());
+    dispatch(gameRequestRespond(data.response));
+  },
 });
 
 export default connect (

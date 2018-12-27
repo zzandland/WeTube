@@ -20,6 +20,16 @@ class App extends Component {
     this.textInput.focus();
   }
 
+  handleSendGameResponse(bool) {
+    const { self, sendGameResponse, receivedData } = this.props;
+    const data = {
+      response: bool,
+      sender: self.userId,
+      recipient: receivedData.challenger, 
+      game: receivedData.game,
+    }; 
+    sendGameResponse(data); }
+
   initUsername() {
     const { changeUsername } = this.props;
     const randomNum = Math.floor(Math.random * 1000);
@@ -53,8 +63,19 @@ class App extends Component {
   }
 
   render() {
-    const { videoToggle, mapToggle, gameToggle, toggleGoogleMap, toggleGamePlay } = this.props;
-    let youtube, map, game;
+    const { users, videoToggle, mapToggle, gameToggle, toggleGoogleMap, toggleGamePlay, hasReceived, receivedData } = this.props;
+    let youtube, map, game, notification;
+    if (hasReceived) {
+      const challengerIndex = users.map(user => user.userId).indexOf(receivedData.challenger);
+      const challengerName = users[challengerIndex].name;
+      notification = (
+        <div>
+          <p>{challengerName} wants to play {receivedData.game} together!</p>
+          <button onClick={() => { this.handleSendGameResponse(true) }}>Accept</button>
+          <button onClick={() => { this.handleSendGameResponse(false) }}>Reject</button>
+        </div>
+      );
+    }
     if (videoToggle) {
       youtube = (
         <div>
@@ -85,6 +106,7 @@ class App extends Component {
     }
     return (
       <div>
+        {notification}
         {youtube}
         <ChatterBox setRef={this.setRef.bind(this)} />
         {game}

@@ -1,6 +1,7 @@
 const initialState = {
   videoToggle: false,
   mapToggle: false,
+  gameToggle: false,
 };
 
 export default (state = initialState, action) => {
@@ -13,6 +14,11 @@ export default (state = initialState, action) => {
     case 'TOGGLE_MAP':
       return Object.assign({}, state, {
         mapToggle: !state.mapToggle,
+      })
+
+    case 'TOGGLE_GAME':
+      return Object.assign({}, state, {
+        gameToggle: !state.gameToggle,
       })
 
     default:

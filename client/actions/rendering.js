@@ -5,3 +5,7 @@ export const toggleYoutube = () => ({
 export const toggleGoogleMap = () => ({
   type: 'TOGGLE_MAP',
 });
+
+export const toggleGame = () => ({
+  type: 'TOGGLE_GAME',
+});

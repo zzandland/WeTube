@@ -1,25 +1,51 @@
 import React, { Component } from 'react';
+import GameBoard from '../containers/GameBoard';
 
-export default ({ gameOption, opponentOption, selectGame, selectOpponent, users, self }) => {
+export default ({ gameOption, opponentOption, selectGame, selectOpponent, sendGameRequest, isLoading, hasErrored, isRejected, gameInitiated, gamePlaying, users, self, targetPlayer, resetRequest }) => {
   const withoutSelf = users.filter(user => {
     return user.name !== self.name;
   })
-  return (
-    <form>
-      <label>
-        Game to play:
-        <select value={gameOption} onChange={() => { selectGame() }}>
-          <option value={"tictactoe"}>Tic Tac Toe</option>
-          <option value={"chess"}>Chess</option>
+  if (isLoading) {
+    const opponentIndex = withoutSelf.map(user => user.userId).indexOf(opponentOption);
+    const opponentName = withoutSelf[opponentIndex].name;
+    return <div>Sending request to...{opponentName}</div>;
+  } else if (hasErrored) {
+    return <div>Error</div>;
+  } else if (isRejected) {
+    return (
+      <div>
+        <p>{targetPlayer} refused to play together</p>
+        <button onClick={() => { resetRequest() }}>Close</button>
+      </div>
+    );
+  } else if (gameInitiated) {
+    return <GameBoard />;
+  } else {
+    return (
+      <form
+        onSubmit={(event) => {
+          event.preventDefault();
+          if (gameOption !== '' && opponentOption !== '') {
+            const data = {
+              game: gameOption,
+              challenger: self.userId,
+              recipient: opponentOption,
+            };
+            sendGameRequest(data);
+          }
+        }}
+      >
+        <select value={gameOption} onChange={(event) => { selectGame(event.target.value) }}>
+          <option value="">Game to play:</option>
+          <option value="tictactoe">Tic Tac Toe</option>
+          <option value="chess">Chess</option>
         </select>
-      </label>
-      <label>
-        Who do you want to play with?:
-        <select value={opponentOption} onChange={() => { selectOpponent() }}>
+        <select value={opponentOption} onChange={(event) => { selectOpponent(event.target.value) }}>
+          <option value="">Choose opponent</option>
           {withoutSelf.map(user => <option value={user.userId}>{user.name}</option>)}
         </select>
-      </label>
-      <input type="submit" value="Send Request" />
-    </form>
-  );
+        <input type="submit" value="Send Request" />
+      </form>
+    );
+  }
 };
