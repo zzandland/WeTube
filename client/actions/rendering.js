@@ -6,6 +6,7 @@ export const toggleGoogleMap = () => ({
   type: 'TOGGLE_MAP',
 });
 
-export const toggleGame = () => ({
+export const toggleGame = (bool) => ({
   type: 'TOGGLE_GAME',
+  bool,
 });

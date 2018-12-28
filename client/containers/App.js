@@ -22,7 +22,7 @@ const mapDispatchToProps = dispatch => ({
   getCoordinates: (crd) => socketEmit('SEND_COORDS', crd),
   sendGameResponse: data => {
     socketEmit('SEND_RESPONSE', data);
-    dispatch(toggleGame());
+    dispatch(toggleGame(data.response));
     dispatch(gameRequestRespond(data.response));
   },
 });

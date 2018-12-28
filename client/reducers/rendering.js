@@ -18,7 +18,7 @@ export default (state = initialState, action) => {
 
     case 'TOGGLE_GAME':
       return Object.assign({}, state, {
-        gameToggle: !state.gameToggle,
+        gameToggle: action.bool === undefined ? !state.gameToggle : action.bool 
       })
 
     default:
